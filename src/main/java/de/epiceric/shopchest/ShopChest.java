@@ -67,7 +67,6 @@ import fr.xephi.authme.AuthMe;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.wiefferink.areashop.AreaShop;
 import net.milkbowl.vault.economy.Economy;
-import pl.islandworld.IslandWorld;
 import us.talabrek.ultimateskyblock.api.uSkyBlockAPI;
 import world.bentobox.bentobox.BentoBox;
 
@@ -89,7 +88,6 @@ public class ShopChest extends JavaPlugin {
     private AuthMe authMe;
     private uSkyBlockAPI uSkyBlock;
     private ASkyBlock aSkyBlock;
-    private IslandWorld islandWorld;
     private GriefPrevention griefPrevention;
     private AreaShop areaShop;
     private BentoBox bentoBox;
@@ -287,11 +285,6 @@ public class ShopChest extends JavaPlugin {
             aSkyBlock = (ASkyBlock) aSkyBlockPlugin;
         }
 
-        Plugin islandWorldPlugin = Bukkit.getServer().getPluginManager().getPlugin("IslandWorld");
-        if (islandWorldPlugin instanceof IslandWorld) {
-            islandWorld = (IslandWorld) islandWorldPlugin;
-        }
-
         Plugin griefPreventionPlugin = Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention");
         if (griefPreventionPlugin instanceof GriefPrevention) {
             griefPrevention = (GriefPrevention) griefPreventionPlugin;
@@ -402,8 +395,6 @@ public class ShopChest extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new ASkyBlockListener(this), this);
         if (hasGriefPrevention())
             getServer().getPluginManager().registerEvents(new GriefPreventionListener(this), this);
-        if (hasIslandWorld())
-            getServer().getPluginManager().registerEvents(new IslandWorldListener(this), this);
         if (hasUSkyBlock())
             getServer().getPluginManager().registerEvents(new USkyBlockListener(this), this);
         if (hasWorldGuard())
@@ -535,12 +526,6 @@ public class ShopChest extends JavaPlugin {
         return griefPrevention;
     }
 
-    /**
-     * @return Whether the plugin 'IslandWorld' is enabled
-     */
-    public boolean hasIslandWorld() {
-        return islandWorld != null && islandWorld.isEnabled();
-    }
     /**
      * @return Whether the plugin 'ASkyBlock' is enabled
      */

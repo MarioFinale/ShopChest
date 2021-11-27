@@ -14,7 +14,6 @@ import de.epiceric.shopchest.config.Config;
 import de.epiceric.shopchest.event.ShopCreateEvent;
 import de.epiceric.shopchest.event.ShopExtendEvent;
 import de.epiceric.shopchest.utils.Utils;
-import pl.islandworld.api.IslandWorldApi;
 
 public class IslandWorldListener implements Listener {
     private final ShopChest plugin;
@@ -25,9 +24,6 @@ public class IslandWorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCreateShop(ShopCreateEvent e) {
-        if (!Config.enableIslandWorldIntegration || !IslandWorldApi.isInitialized())
-            return;
-
         Set<Location> chestLocations = Utils.getChestLocations(e.getShop());
         for (Location loc : chestLocations) {
             if (handleForLocation(e.getPlayer(), loc, e))
@@ -37,22 +33,10 @@ public class IslandWorldListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onExtendShop(ShopExtendEvent e) {
-        if (!Config.enableIslandWorldIntegration || !IslandWorldApi.isInitialized())
-            return;
-
         handleForLocation(e.getPlayer(), e.getNewChestLocation(), e);
     }
 
     private boolean handleForLocation(Player player, Location loc, Cancellable e) {
-        if (!loc.getWorld().getName().equals(IslandWorldApi.getIslandWorld().getName())) 
-            return false;
-
-        if (!IslandWorldApi.canBuildOnLocation(player, loc, true)) {
-            e.setCancelled(true);
-            plugin.debug("Cancel Reason: IslandWorld");
-            return true;
-        }
-
         return false;
     }
     

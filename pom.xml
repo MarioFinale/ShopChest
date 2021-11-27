@@ -150,20 +150,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.palmergames</groupId>
-            <artifactId>Towny</artifactId>
-            <version>0.93.1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Towny-0.93.1.0.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>pl.gnacik</groupId>
-            <artifactId>IslandWorld</artifactId>
-            <version>8.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/IslandWorld-8.5.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>net.minecraft</groupId>
             <artifactId>1.17.1-Patched</artifactId>
             <version>1.17.1</version>
