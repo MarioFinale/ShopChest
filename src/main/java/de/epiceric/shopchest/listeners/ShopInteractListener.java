@@ -30,8 +30,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.IWrappedFlag;
 import org.codemc.worldguardwrapper.flag.WrappedState;
-import org.inventivetalent.reflection.resolver.minecraft.NMSClassResolver;
-import org.inventivetalent.reflection.resolver.minecraft.OBCClassResolver;
 
 import de.epiceric.shopchest.ShopChest;
 import de.epiceric.shopchest.config.Config;
@@ -248,24 +246,6 @@ public class ShopInteractListener implements Listener {
                             // TODO: Outsource shop use external permission
                             boolean externalPluginsAllowed = true;
 
-<<<<<<< Updated upstream
-                            if (plugin.hasPlotSquared() && Config.enablePlotsquaredIntegration) {
-                                try {
-                                    Class.forName("com.plotsquared.core.PlotSquared");
-                                    com.plotsquared.core.location.Location plotLocation =
-                                            com.plotsquared.core.location.Location.at(b.getWorld().getName(), b.getX(), b.getY(), b.getZ());
-                                    com.plotsquared.core.plot.Plot plot = plotLocation.getOwnedPlot();
-                                    externalPluginsAllowed = PlotSquaredShopFlag.isFlagAllowedOnPlot(plot, PlotSquaredShopFlag.USE_SHOP, p);
-                                } catch (ClassNotFoundException ex) {
-                                    com.github.intellectualsites.plotsquared.plot.object.Location plotLocation =
-                                            new com.github.intellectualsites.plotsquared.plot.object.Location(b.getWorld().getName(), b.getX(), b.getY(), b.getZ());
-                                    com.github.intellectualsites.plotsquared.plot.object.Plot plot = plotLocation.getOwnedPlot();
-                                    externalPluginsAllowed = PlotSquaredOldShopFlag.isFlagAllowedOnPlot(plot, PlotSquaredOldShopFlag.USE_SHOP, p);
-                                }
-                            }
-
-=======
->>>>>>> Stashed changes
                             if (externalPluginsAllowed && plugin.hasWorldGuard() && Config.enableWorldGuardIntegration) {
                                 String flagName = (shop.getShopType() == ShopType.ADMIN ? "use-admin-shop" : "use-shop");
                                 WorldGuardWrapper wgWrapper = WorldGuardWrapper.getInstance();
@@ -376,24 +356,6 @@ public class ShopInteractListener implements Listener {
                             // TODO: Outsource shop use external permission
                             boolean externalPluginsAllowed = true;
 
-<<<<<<< Updated upstream
-                            if (plugin.hasPlotSquared() && Config.enablePlotsquaredIntegration) {
-                                try {
-                                    Class.forName("com.plotsquared.core.PlotSquared");
-                                    com.plotsquared.core.location.Location plotLocation =
-                                            com.plotsquared.core.location.Location.at(b.getWorld().getName(), b.getX(), b.getY(), b.getZ());
-                                    com.plotsquared.core.plot.Plot plot = plotLocation.getOwnedPlot();
-                                    externalPluginsAllowed = PlotSquaredShopFlag.isFlagAllowedOnPlot(plot, PlotSquaredShopFlag.USE_SHOP, p);
-                                } catch (ClassNotFoundException ex) {
-                                    com.github.intellectualsites.plotsquared.plot.object.Location plotLocation =
-                                            new com.github.intellectualsites.plotsquared.plot.object.Location(b.getWorld().getName(), b.getX(), b.getY(), b.getZ());
-                                    com.github.intellectualsites.plotsquared.plot.object.Plot plot = plotLocation.getOwnedPlot();
-                                    externalPluginsAllowed = PlotSquaredOldShopFlag.isFlagAllowedOnPlot(plot, PlotSquaredOldShopFlag.USE_SHOP, p);
-                                }
-                            }
-
-=======
->>>>>>> Stashed changes
                             if (externalPluginsAllowed && plugin.hasWorldGuard() && Config.enableWorldGuardIntegration) {
                                 String flagName = (shop.getShopType() == ShopType.ADMIN ? "use-admin-shop" : "use-shop");
                                 WorldGuardWrapper wgWrapper = WorldGuardWrapper.getInstance();
@@ -638,85 +600,6 @@ public class ShopInteractListener implements Listener {
 
 
 
-<<<<<<< Updated upstream
-    /**
-     * Create a {@link JsonBuilder} containing the shop info message for the product
-     * in which you can hover the item name to get a preview.
-     * @param product The product of the shop
-     * @return A {@link JsonBuilder} that can send the message via {@link JsonBuilder#sendJson(Player)}
-     */
-    private JsonBuilder getProductJson(ShopProduct product) {
-        // Add spaces at start and end, so there will always be a part before and after
-        // the item name after splitting at Placeholder.ITEM_NAME
-        String productString = " " + LanguageUtils.getMessage(Message.SHOP_INFO_PRODUCT,
-                new Replacement(Placeholder.AMOUNT, String.valueOf(product.getAmount()))) + " ";
-
-        String[] parts = productString.split(Placeholder.ITEM_NAME.toString());
-        String productName = product.getLocalizedName();
-        String jsonItem = "";
-        JsonBuilder jb = new JsonBuilder(plugin);
-        JsonBuilder.PartArray rootArray = new JsonBuilder.PartArray();
-        
-        try {
-            OBCClassResolver obcClassResolver = new OBCClassResolver();
-            NMSClassResolver nmsClassResolver = new NMSClassResolver();
-
-            Class<?> craftItemStackClass = obcClassResolver.resolveSilent("inventory.CraftItemStack");	
-            Object nmsStack = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, product.getItemStack());	
-            Class<?> nbtTagCompoundClass = nmsClassResolver.resolveSilent("nbt.NBTTagCompound");
-            Object nbtTagCompound = nbtTagCompoundClass.getConstructor().newInstance();
-            nmsStack.getClass().getMethod("save", nbtTagCompoundClass).invoke(nmsStack, nbtTagCompound);
-            jsonItem = new JsonPrimitive(nbtTagCompound.toString()).toString();
-        } catch (Exception e) {
-            plugin.getLogger().severe("Failed to create JSON from item. Product preview will not be available.");
-            plugin.debug("Failed to create JSON from item:");
-            plugin.debug(e);
-            jb.setRootPart(new JsonBuilder.Part(productString.replace(Placeholder.ITEM_NAME.toString(), productName)));
-            return jb;
-        }
-
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
-
-            // Remove spaces at start and end that were added before
-            if (i == 0 && part.startsWith(" ")) {
-                part = part.substring(1);
-            } else if (i == parts.length - 1 && part.endsWith(" ")) {
-                part = part.substring(0, part.length() - 1);
-            }
-
-            String formatPrefix = "";
-
-            // A color code resets all format codes, so only format codes
-            // after the last color code have to be found.
-            int lastColorGroupEndIndex = 0;
-
-            Matcher colorMatcher = COLOR_CODE_PATTERN.matcher(part);
-            if (colorMatcher.find()) {
-                formatPrefix = colorMatcher.group(1);
-                lastColorGroupEndIndex = colorMatcher.end();
-            }
-            
-            Matcher formatMatcher = FORMAT_CODE_PATTERN.matcher(part);
-            while (formatMatcher.find(lastColorGroupEndIndex)) {
-                formatPrefix += formatMatcher.group(1);
-            }
-
-            rootArray.addPart(new JsonBuilder.Part(part));
-
-            if (i < parts.length - 1) {
-                JsonBuilder.PartMap hoverEvent = new JsonBuilder.PartMap();
-                hoverEvent.setValue("action", new JsonBuilder.Part("show_item"));
-                hoverEvent.setValue("value", new JsonBuilder.Part(jsonItem, false));
-
-                JsonBuilder.PartMap itemNameMap = JsonBuilder.parse(formatPrefix + productName).toMap();
-                itemNameMap.setValue("hoverEvent", hoverEvent);
-
-                rootArray.addPart(itemNameMap);
-            }
-        }
-=======
->>>>>>> Stashed changes
 
     }
 
