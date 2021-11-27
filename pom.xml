@@ -6,7 +6,7 @@
 
     <groupId>de.epiceric</groupId>
     <artifactId>ShopChest</artifactId>
-    <version>1.13-SNAPSHOT</version>
+    <version>1.17.1</version>
 
     <name>ShopChest</name>
     <url>https://www.spigotmc.org/resources/shopchest.11431/</url>
@@ -46,9 +46,16 @@
         <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
         <!-- JDK Version -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
     </properties>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <repositories>
         <repository>
@@ -95,12 +102,15 @@
 
     <dependencies>
         <dependency>
+<<<<<<< Updated upstream
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
+=======
+>>>>>>> Stashed changes
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
@@ -170,10 +180,18 @@
 
         <!-- Only required for build to succeed ? -->
         <dependency>
+<<<<<<< Updated upstream
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
             <scope>provided</scope>
+=======
+            <groupId>net.minecraft</groupId>
+            <artifactId>1.17.1-Patched</artifactId>
+            <version>1.17.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/patched_1.17.1.jar</systemPath>
+>>>>>>> Stashed changes
         </dependency>
 
         <!-- Shaded dependencies -->
@@ -217,7 +235,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

@@ -5,11 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -163,7 +159,7 @@ class ShopCommandExecutor implements CommandExecutor {
             plugin.setUpdateNeeded(true);
 
             if (sender instanceof Player) {
-                Utils.sendUpdateMessage(plugin, (Player) sender);
+                sender.sendMessage(ChatColor.BOLD + "" + ChatColor.GREEN +"[Shopchest]:" + ChatColor.WHITE + "No hay actualizaciones, nunca van a haber.");
             } else {
                 sender.sendMessage(LanguageUtils.getMessage(Message.UPDATE_AVAILABLE, new Replacement(Placeholder.VERSION, uc.getVersion())));
             }

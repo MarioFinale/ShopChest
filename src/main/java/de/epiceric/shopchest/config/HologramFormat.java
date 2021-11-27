@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.epiceric.shopchest.ShopChest;
 import de.epiceric.shopchest.utils.Operator;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class HologramFormat {
 
@@ -31,8 +31,7 @@ public class HologramFormat {
     // e.g.: "STONE" == "DIAMOND_SWORD"
     private static final Pattern SIMPLE_STRING_CONDITION = Pattern.compile("^\"([^\"]*)\" ([=!]=) \"([^\"]*)\"$");
 
-    private ScriptEngineManager manager = new ScriptEngineManager();
-    private ScriptEngine engine = manager.getEngineByName("JavaScript");
+    private ScriptEngine engine =  new ScriptEngineManager(null).getEngineByName("JavaScript");
 
     private ShopChest plugin;
     private File configFile;
@@ -190,15 +189,15 @@ public class HologramFormat {
                     }
                 }
             }
-
-            // complex comparison
-            try {
+            return false;
+            // complex comparison -> Disabled, Javascript engine is no longed bundled in OpenJDK 16
+           /* try {
                 return (boolean) engine.eval(cond);
             } catch (ScriptException e) {
                 plugin.debug("Failed to eval condition: " + condition);
                 plugin.debug(e);
                 return false;
-            }
+            }*/
         }
     }
 

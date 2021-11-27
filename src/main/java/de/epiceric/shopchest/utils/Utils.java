@@ -42,7 +42,6 @@ import de.epiceric.shopchest.language.LanguageUtils;
 import de.epiceric.shopchest.language.Message;
 import de.epiceric.shopchest.language.Replacement;
 import de.epiceric.shopchest.nms.CustomBookMeta;
-import de.epiceric.shopchest.nms.JsonBuilder;
 import de.epiceric.shopchest.shop.Shop;
 
 public class Utils {
@@ -322,6 +321,7 @@ public class Utils {
         return chestLocations;
     }
 
+<<<<<<< Updated upstream
     /**
      * Send a clickable update notification to the given player.
      * @param plugin An instance of the {@link ShopChest} plugin
@@ -556,10 +556,29 @@ public class Utils {
             plugin.getLogger().severe("Failed to create packet to spawn entity!");
             plugin.debug("Failed to create packet to spawn entity!");
             plugin.debug(e);
+=======
+
+    /**
+     * @param className Name of the class
+     * @return Class in {@code org.bukkit.craftbukkit.[VERSION]} package with the specified name or {@code null} if the class was not found
+     */
+    public static Class<?> getCraftClass(String className) {
+        try {
+            return Class.forName("org.bukkit.craftbukkit." + getServerVersion() + "." + className);
+        } catch (ClassNotFoundException e) {
             return null;
         }
     }
 
+    public static Class<?> getClass(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+>>>>>>> Stashed changes
+            return null;
+        }
+    }
     /**
      * Send a packet to a player
      * @param plugin An instance of the {@link ShopChest} plugin
@@ -574,7 +593,11 @@ public class Utils {
                 return false;
             }
 
+<<<<<<< Updated upstream
             Class<?> packetClass = nmsClassResolver.resolveSilent("network.protocol.Packet");
+=======
+            Class<?> packetClass = Utils.getClass("net.minecraft.network.protocol.Packet");
+>>>>>>> Stashed changes
             if (packetClass == null) {
                 plugin.debug("Failed to send packet: Could not find Packet class");
                 return false;

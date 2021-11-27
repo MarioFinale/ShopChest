@@ -2,13 +2,17 @@ package de.epiceric.shopchest.shop;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.inventivetalent.reflection.resolver.minecraft.NMSClassResolver;
@@ -16,17 +20,19 @@ import org.inventivetalent.reflection.resolver.minecraft.OBCClassResolver;
 
 import de.epiceric.shopchest.ShopChest;
 import de.epiceric.shopchest.utils.Utils;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ShopItem {
     private final ShopChest plugin;
-
-    // concurrent since update task is in async thread
     private final Set<UUID> viewers = ConcurrentHashMap.newKeySet();
     private final ItemStack itemStack;
     private final Location location;
-    private final UUID uuid = UUID.randomUUID();
-    private final int entityId;
+    private UUID uuid;
+    private int entityId;
+    private Entity entity;
+    private boolean exists;
 
+<<<<<<< Updated upstream
     private final NMSClassResolver nmsClassResolver = new NMSClassResolver();
     private final OBCClassResolver obcClassResolver = new OBCClassResolver();
     private final Class<?> packetPlayOutEntityDestroyClass = nmsClassResolver.resolveSilent("network.protocol.game.PacketPlayOutEntityDestroy");
@@ -36,11 +42,14 @@ public class ShopItem {
     private final Class<?> vec3dClass = nmsClassResolver.resolveSilent("world.phys.Vec3D");
     private final Class<?> craftItemStackClass = obcClassResolver.resolveSilent("inventory.CraftItemStack");
     private final Class<?> nmsItemStackClass = nmsClassResolver.resolveSilent("world.item.ItemStack");
+=======
+>>>>>>> Stashed changes
 
     public ShopItem(ShopChest plugin, ItemStack itemStack, Location location) {
         this.plugin = plugin;
         this.itemStack = itemStack;
         this.location = location;
+<<<<<<< Updated upstream
         this.entityId = Utils.getFreeEntityId();
 
         Class<?>[] requiredClasses = new Class<?>[] {
@@ -54,6 +63,22 @@ public class ShopItem {
                 return;
             }
         }
+=======
+        entity = location.getWorld().dropItem(location,itemStack);
+        uuid = entity.getUniqueId();
+        entityId = entity.getEntityId();
+        Item item = (Item) entity;
+        item.setGravity(true);
+        item.setWillAge(true);
+        item.setTicksLived(4800);
+        item.setPickupDelay(32767);
+        item.setInvulnerable(true);
+        item.setCanPlayerPickup(false);
+        item.teleport(location);
+        entity.teleport(location);
+        exists = true;
+
+>>>>>>> Stashed changes
     }
 
     /**
@@ -82,6 +107,7 @@ public class ShopItem {
      * @param p Player to which the item should be shown
      */
     public void showPlayer(Player p) {
+
         showPlayer(p, false);
     }
 
@@ -90,24 +116,44 @@ public class ShopItem {
      * @param force whether to force or not
      */
     public void showPlayer(Player p, boolean force) {
-        if (viewers.add(p.getUniqueId()) || force) {
-            try {
-                Object nmsItemStack = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
-                Object dataWatcher = Utils.createDataWatcher(null, nmsItemStack);
-                Utils.sendPacket(plugin, Utils.createPacketSpawnEntity(plugin, entityId, uuid, location, EntityType.DROPPED_ITEM), p);
-                Utils.sendPacket(plugin, packetPlayOutEntityMetadataClass.getConstructor(int.class, dataWatcherClass, boolean.class).newInstance(entityId, dataWatcher, true), p);
-                if (Utils.getMajorVersion() < 14) {
-                    Utils.sendPacket(plugin, packetPlayOutEntityVelocityClass.getConstructor(int.class, double.class, double.class, double.class).newInstance(entityId, 0D, 0D, 0D), p);
-                } else {
-                    Object vec3d = vec3dClass.getConstructor(double.class, double.class, double.class).newInstance(0D, 0D, 0D);
-                    Utils.sendPacket(plugin, packetPlayOutEntityVelocityClass.getConstructor(int.class, vec3dClass).newInstance(entityId, vec3d), p);
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if ((entity != null && entity.isValid() && !(entity.isDead()))){
+                        entity.teleport(location);
+                    }else {
+                        if (entity != null){entity.remove();}
+                        entity = location.getWorld().dropItem(location,itemStack);
+                        uuid = entity.getUniqueId();
+                        entityId = entity.getEntityId();
+                        Item item = (Item) entity;
+                        item.setGravity(true);
+                        item.setWillAge(true);
+                        item.setTicksLived(4800);
+                        item.setPickupDelay(32767);
+                        item.setInvulnerable(true);
+                        item.setCanPlayerPickup(false);
+                        entity.teleport(location);
+                        item.teleport(location);
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+                            @Override
+                            public void run(){
+                                List<Entity> ent = entity.getNearbyEntities(1,1,1);
+                                for (Entity tent: ent ) {
+                                    if (tent.getType() == EntityType.DROPPED_ITEM){
+                                        Material mat = ((Item) tent).getItemStack().getType();
+                                        if (mat == itemStack.getType()){
+                                            if(tent.getEntityId() != entityId){
+                                                tent.remove();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }, 20L);
+                    }
                 }
-            } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | InstantiationException e) {
-                plugin.getLogger().severe("Failed to create item!");
-                plugin.debug("Failed to create item!");
-                plugin.debug(e);
-            }        
-        }
+            }.runTask(plugin);
     }
 
     /**
@@ -122,22 +168,11 @@ public class ShopItem {
      * @param force whether to force or not
      */
     public void hidePlayer(Player p, boolean force) {
-        if (viewers.remove(p.getUniqueId()) || force) {
-            try {
-                if (p.isOnline()) {
-                    Object packetPlayOutEntityDestroy = packetPlayOutEntityDestroyClass.getConstructor(int[].class).newInstance((Object) new int[]{entityId});
-                    Utils.sendPacket(plugin, packetPlayOutEntityDestroy, p);
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                plugin.getLogger().severe("Failed to destroy shop item");
-                plugin.debug("Failed to destroy shop item with reflection");
-                plugin.debug(e);
-            }
-        }
+        //always visible;
     }
 
     public void resetVisible(Player p) {
-        viewers.remove(p.getUniqueId());
+        showPlayer(p);
     }
 
     /**
@@ -145,11 +180,13 @@ public class ShopItem {
      * Item will be hidden from all players
      */
     public void remove() {
-        // Avoid ConcurrentModificationException
-        for (UUID uuid : new ArrayList<>(viewers)) {
-            Player p = Bukkit.getPlayer(uuid);
-            if (p != null) hidePlayer(p);
-        }
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                entity.remove();
+            }
+        }.runTask(plugin);
+    this.exists = false;
     }
 
     /**
@@ -157,8 +194,45 @@ public class ShopItem {
      * @param p Player, for which the item should be reset
      */
     public void resetForPlayer(Player p) {
-        hidePlayer(p);
-        showPlayer(p);
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                if (!(entity == null)){
+                    entity.remove();
+                }
+                entity = location.getWorld().dropItem(location,itemStack);
+                uuid = entity.getUniqueId();
+                entityId = entity.getEntityId();
+                Item item = (Item) entity;
+                item.setGravity(true);
+                item.setWillAge(true);
+                item.setTicksLived(4800);
+                item.setPickupDelay(32767);
+                item.setInvulnerable(true);
+                item.setCanPlayerPickup(false);
+                entity.teleport(location);
+                item.teleport(location);
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+                    @Override
+                    public void run(){
+                        List<Entity> ent = entity.getNearbyEntities(1,1,1);
+                        for (Entity tent: ent ) {
+                            if (tent.getType() == EntityType.DROPPED_ITEM){
+                                Material mat = ((Item) tent).getItemStack().getType();
+                                if (mat == itemStack.getType()){
+                                    if(tent.getEntityId() != entityId){
+                                        tent.remove();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, 20L);
+            }
+        }.runTask(plugin);
     }
 
+    public boolean exists(){
+        return this.exists;
+    }
 }

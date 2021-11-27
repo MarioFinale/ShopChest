@@ -139,7 +139,7 @@ public class Shop {
 
         plugin.getShopCreationThreadPool().execute(() -> {
             if (hologram == null || !hologram.exists()) createHologram(preResult);
-            if (item == null) createItem();
+            if (item == null || !item.exists()) createItem();
 
             // Update shops for players in the same world after creation has finished
             plugin.getUpdater().queue(() -> {
@@ -158,33 +158,31 @@ public class Shop {
      * Removes the hologram of the shop
      */
     public void removeHologram() {
-        if (hologram != null && hologram.exists()) {
-            plugin.debug("Removing hologram (#" + id + ")");
             hologram.remove();
-        }
     }
 
     /**
      * Removes the floating item of the shop
      */
     public void removeItem() {
-        if (item != null) {
-            plugin.debug("Removing shop item (#" + id + ")");
-            item.remove();
-        }
+        item.remove();
     }
 
     /**
      * <p>Creates the floating item of the shop</p>
-     * <b>Call this after {@link #createHologram()}, because it depends on the hologram's location</b>
      */
     private void createItem() {
         plugin.debug("Creating item (#" + id + ")");
-
         Location itemLocation;
-
         itemLocation = new Location(location.getWorld(), holoLocation.getX(), location.getY() + 0.9, holoLocation.getZ());
-        item = new ShopItem(plugin, product.getItemStack(), itemLocation);
+        if (item == null ||!item.exists()){
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    item = new ShopItem(plugin, product.getItemStack(), itemLocation);
+                }
+            }.runTask(plugin);
+        }
     }
 
     /**
@@ -227,13 +225,14 @@ public class Shop {
     private void createHologram(PreCreateResult preResult) {
         String[] holoText = getHologramText(preResult.inventory);
         holoLocation = getHologramLocation(preResult.chests, preResult.face);
-
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                hologram = new Hologram(plugin, holoText, holoLocation);
-            }
-        }.runTask(plugin);
+        if (hologram == null || !hologram.exists()){
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    hologram = new Hologram(plugin, holoText, holoLocation);
+                }
+            }.runTask(plugin);
+        }
     }
 
     /**
@@ -264,7 +263,7 @@ public class Shop {
         requirements.put(HologramFormat.Requirement.VENDOR, getVendor().getName());
         requirements.put(HologramFormat.Requirement.AMOUNT, getProduct().getAmount());
         requirements.put(HologramFormat.Requirement.ITEM_TYPE, itemStack.getType() + (itemStack.getDurability() > 0 ? ":" + itemStack.getDurability() : ""));
-        requirements.put(HologramFormat.Requirement.ITEM_NAME, itemStack.hasItemMeta() ? itemStack.getItemMeta().getDisplayName() : null);
+        requirements.put(HologramFormat.Requirement.ITEM_NAME, itemStack.hasItemMeta() ? itemStack.getItemMeta().getLocalizedName() : null);
         requirements.put(HologramFormat.Requirement.HAS_ENCHANTMENT, !LanguageUtils.getEnchantmentString(ItemUtils.getEnchantments(itemStack)).isEmpty());
         requirements.put(HologramFormat.Requirement.BUY_PRICE, getBuyPrice());
         requirements.put(HologramFormat.Requirement.SELL_PRICE, getSellPrice());

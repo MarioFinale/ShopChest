@@ -137,8 +137,7 @@ public class ShopUtils {
      */
     public void removeShops() {
         shopLocation.forEach((location, shop) -> {
-            if (!shop.isCreated()) return;
-
+            //if (!shop.isCreated()) return;
             plugin.debug("Removing shop " + shop.getID());
             shop.removeItem();
             shop.removeHologram();

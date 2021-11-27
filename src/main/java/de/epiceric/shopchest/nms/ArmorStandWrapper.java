@@ -1,29 +1,42 @@
 package de.epiceric.shopchest.nms;
 
+<<<<<<< Updated upstream
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+=======
+>>>>>>> Stashed changes
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.inventivetalent.reflection.resolver.minecraft.NMSClassResolver;
 
 import de.epiceric.shopchest.ShopChest;
-import de.epiceric.shopchest.utils.Utils;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ArmorStandWrapper {
+<<<<<<< Updated upstream
     private final NMSClassResolver nmsClassResolver = new NMSClassResolver();
     private final Class<?> packetDataSerializerClass = nmsClassResolver.resolveSilent("network.PacketDataSerializer");
     private final Class<?> packetPlayOutEntityDestroyClass = nmsClassResolver.resolveSilent("network.protocol.game.PacketPlayOutEntityDestroy");
     private final Class<?> packetPlayOutEntityMetadataClass = nmsClassResolver.resolveSilent("network.protocol.game.PacketPlayOutEntityMetadata");
     private final Class<?> packetPlayOutEntityTeleportClass = nmsClassResolver.resolveSilent("network.protocol.game.PacketPlayOutEntityTeleport");
     private final Class<?> dataWatcherClass = nmsClassResolver.resolveSilent("network.syncher.DataWatcher");
+=======
+>>>>>>> Stashed changes
 
-    private final UUID uuid = UUID.randomUUID();
-    private final int entityId;
+    private UUID uuid;
+    private int entityId;
 
     private ShopChest plugin;
+<<<<<<< Updated upstream
+=======
+    private Entity entity;
+>>>>>>> Stashed changes
     private Location location;
     private String customName;
 
@@ -31,28 +44,50 @@ public class ArmorStandWrapper {
         this.plugin = plugin;
         this.location = location;
         this.customName = customName;
-        this.entityId = Utils.getFreeEntityId();
+        entity = location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        this.entityId = entity.getEntityId();
+        this.uuid = entity.getUniqueId();
+        ArmorStand armorStand = (ArmorStand) entity;
+        armorStand.setVisible(false);
+        armorStand.setCustomName("");
+        armorStand.setCustomNameVisible(false);
+        armorStand.setCanTick(false);
     }
 
     public void setVisible(Player player, boolean visible) {
-        try {
-            if (visible) {
-                Object dataWatcher = Utils.createDataWatcher(customName, null);
-                Utils.sendPacket(plugin, Utils.createPacketSpawnEntity(plugin, entityId, uuid, location, EntityType.ARMOR_STAND), player);
-                Utils.sendPacket(plugin, packetPlayOutEntityMetadataClass.getConstructor(int.class, dataWatcherClass, boolean.class)
-                        .newInstance(entityId, dataWatcher, true), player);
-            } else if (entityId != -1) {
-                Utils.sendPacket(plugin, packetPlayOutEntityDestroyClass.getConstructor(int[].class).newInstance((Object) new int[]{entityId}), player);
-            }
-        } catch (ReflectiveOperationException e) {
-            plugin.getLogger().severe("Could not change hologram visibility");
-            plugin.debug("Could not change armor stand visibility");
-            plugin.debug(e);
+        if (visible){
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if (!(entity == null)){
+                        entity.remove();
+                    }
+                    entity = location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+                    entityId = entity.getEntityId();
+                    uuid = entity.getUniqueId();
+                    ArmorStand armorStand = (ArmorStand) entity;
+                    armorStand.setVisible(false);
+                    armorStand.setCustomName(customName);
+                    armorStand.setCustomNameVisible(true);
+                    armorStand.setCanTick(false);
+                    armorStand.setPersistent(false);
+                    armorStand.setRemoveWhenFarAway(true);
+                }
+            }.runTask(plugin);
+        }else{
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    entity.remove();
+                }
+            }.runTask(plugin);
         }
+
     }
 
     public void setLocation(Location location) {
         this.location = location;
+<<<<<<< Updated upstream
         double y = location.getY() + (Utils.getServerVersion().equals("v1_8_R1") ? 0 : 1.975);
         Object packet;
 
@@ -116,29 +151,22 @@ public class ArmorStandWrapper {
             plugin.debug("Could not set armor stand location");
             plugin.debug(e);
         }
+=======
+        entity.teleport(location);
+>>>>>>> Stashed changes
     }
 
     public void setCustomName(String customName) {
-        this.customName = customName;
-        Object dataWatcher = Utils.createDataWatcher(customName, null);
-        try {
-            Object packet = packetPlayOutEntityMetadataClass.getConstructor(int.class, dataWatcherClass, boolean.class)
-                    .newInstance(entityId, dataWatcher, true);
-
-            for (Player player : location.getWorld().getPlayers()) {
-                Utils.sendPacket(plugin, packet, player);
-            }
-        } catch (ReflectiveOperationException e) {
-            plugin.getLogger().severe("Could not set hologram text");
-            plugin.debug("Could not set armor stand custom name");
-            plugin.debug(e);
-        }
+        entity.setCustomName(customName);
     }
 
     public void remove() {
-        for (Player player : location.getWorld().getPlayers()) {
-            setVisible(player, false);
-        }
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                entity.remove();
+            }
+        }.runTask(plugin);
     }
 
     public int getEntityId() {

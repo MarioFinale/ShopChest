@@ -30,7 +30,7 @@ public class NotifyPlayerOnJoinListener implements Listener {
 
         if (plugin.isUpdateNeeded() && Config.enableUpdateChecker) {
             if (p.hasPermission(Permissions.UPDATE_NOTIFICATION)) {
-                Utils.sendUpdateMessage(plugin, p);
+                p.sendMessage("No hay actualizaciones, este plugin esta bien muerto man.");
             }
         }
 

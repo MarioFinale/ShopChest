@@ -8,15 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.gson.JsonPrimitive;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -47,12 +41,9 @@ import de.epiceric.shopchest.event.ShopCreateEvent;
 import de.epiceric.shopchest.event.ShopInfoEvent;
 import de.epiceric.shopchest.event.ShopOpenEvent;
 import de.epiceric.shopchest.event.ShopRemoveEvent;
-import de.epiceric.shopchest.external.PlotSquaredOldShopFlag;
-import de.epiceric.shopchest.external.PlotSquaredShopFlag;
 import de.epiceric.shopchest.language.LanguageUtils;
 import de.epiceric.shopchest.language.Message;
 import de.epiceric.shopchest.language.Replacement;
-import de.epiceric.shopchest.nms.JsonBuilder;
 import de.epiceric.shopchest.shop.Shop;
 import de.epiceric.shopchest.shop.Shop.ShopType;
 import de.epiceric.shopchest.shop.ShopProduct;
@@ -257,6 +248,7 @@ public class ShopInteractListener implements Listener {
                             // TODO: Outsource shop use external permission
                             boolean externalPluginsAllowed = true;
 
+<<<<<<< Updated upstream
                             if (plugin.hasPlotSquared() && Config.enablePlotsquaredIntegration) {
                                 try {
                                     Class.forName("com.plotsquared.core.PlotSquared");
@@ -272,6 +264,8 @@ public class ShopInteractListener implements Listener {
                                 }
                             }
 
+=======
+>>>>>>> Stashed changes
                             if (externalPluginsAllowed && plugin.hasWorldGuard() && Config.enableWorldGuardIntegration) {
                                 String flagName = (shop.getShopType() == ShopType.ADMIN ? "use-admin-shop" : "use-shop");
                                 WorldGuardWrapper wgWrapper = WorldGuardWrapper.getInstance();
@@ -382,6 +376,7 @@ public class ShopInteractListener implements Listener {
                             // TODO: Outsource shop use external permission
                             boolean externalPluginsAllowed = true;
 
+<<<<<<< Updated upstream
                             if (plugin.hasPlotSquared() && Config.enablePlotsquaredIntegration) {
                                 try {
                                     Class.forName("com.plotsquared.core.PlotSquared");
@@ -397,6 +392,8 @@ public class ShopInteractListener implements Listener {
                                 }
                             }
 
+=======
+>>>>>>> Stashed changes
                             if (externalPluginsAllowed && plugin.hasWorldGuard() && Config.enableWorldGuardIntegration) {
                                 String flagName = (shop.getShopType() == ShopType.ADMIN ? "use-admin-shop" : "use-shop");
                                 WorldGuardWrapper wgWrapper = WorldGuardWrapper.getInstance();
@@ -616,37 +613,32 @@ public class ShopInteractListener implements Listener {
         String vendorName = (shop.getVendor().getName() == null ?
                 shop.getVendor().getUniqueId().toString() : shop.getVendor().getName());
 
-        String vendorString = LanguageUtils.getMessage(Message.SHOP_INFO_VENDOR,
-                new Replacement(Placeholder.VENDOR, vendorName));
+        String shopTypeString = ChatColor.RED + "" + ChatColor.BOLD + "Shop de Admin";
+        String buyEnabled = ChatColor.RED + "" + ChatColor.BOLD + "Compra deshabilitada";
+        String sellEnabled = ChatColor.RED + "" + ChatColor.BOLD + "Venta deshabilitada";
+        String itemStock = ChatColor.RED + "" + ChatColor.BOLD + "Admin";
+        String isShopEnabled = ChatColor.RED + "" + ChatColor.BOLD + "Tienda con Stock";
 
-        // Make JSON message with item preview
-        JsonBuilder jb = getProductJson(shop.getProduct());
 
-        String disabled = LanguageUtils.getMessage(Message.SHOP_INFO_DISABLED);
+        if (shop.getShopType() != ShopType.ADMIN) shopTypeString = ChatColor.YELLOW + "Shop Normal";
+        if (shop.getBuyPrice() > 0) buyEnabled = ChatColor.YELLOW +  "" + ChatColor.BOLD + "Compra habilitada";;
+        if (shop.getSellPrice() > 0) sellEnabled = ChatColor.YELLOW + "" + ChatColor.BOLD + "Venta habilitada";;
+        if (shop.getShopType() != ShopType.ADMIN) itemStock = ChatColor.YELLOW + "" + amount;
+        if (amount <= 0) isShopEnabled = ChatColor.RED + "" + ChatColor.BOLD + "Tienda sin stock";
 
-        String priceString = LanguageUtils.getMessage(Message.SHOP_INFO_PRICE,
-                new Replacement(Placeholder.BUY_PRICE, (shop.getBuyPrice() > 0 ? String.valueOf(shop.getBuyPrice()) : disabled)),
-                new Replacement(Placeholder.SELL_PRICE, (shop.getSellPrice() > 0 ? String.valueOf(shop.getSellPrice()) : disabled)));
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "===========================================" );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Tipo de tienda    :     " + shopTypeString );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Tienda habilitada :     " + isShopEnabled );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Compra             :     " + buyEnabled );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Venta               :     " + sellEnabled );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Stock               :     " + itemStock );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Dueño              :     " + vendorName );
+        executor.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "===========================================" );
 
-        String shopType = LanguageUtils.getMessage(shop.getShopType() == ShopType.NORMAL ?
-                Message.SHOP_INFO_NORMAL : Message.SHOP_INFO_ADMIN);
 
-        String stock = LanguageUtils.getMessage(Message.SHOP_INFO_STOCK,
-                new Replacement(Placeholder.STOCK, amount));
 
-        String chestSpace = LanguageUtils.getMessage(Message.SHOP_INFO_CHEST_SPACE,
-                new Replacement(Placeholder.CHEST_SPACE, space));
 
-        executor.sendMessage(" ");
-        if (shop.getShopType() != ShopType.ADMIN) executor.sendMessage(vendorString);
-        jb.sendJson(executor);
-        if (shop.getShopType() != ShopType.ADMIN && shop.getBuyPrice() > 0) executor.sendMessage(stock);
-        if (shop.getShopType() != ShopType.ADMIN && shop.getSellPrice() > 0) executor.sendMessage(chestSpace);
-        executor.sendMessage(priceString);
-        executor.sendMessage(shopType);
-        executor.sendMessage(" ");
-    }
-
+<<<<<<< Updated upstream
     /**
      * Create a {@link JsonBuilder} containing the shop info message for the product
      * in which you can hover the item name to get a preview.
@@ -723,9 +715,9 @@ public class ShopInteractListener implements Listener {
                 rootArray.addPart(itemNameMap);
             }
         }
+=======
+>>>>>>> Stashed changes
 
-        jb.setRootPart(rootArray);
-        return jb;
     }
 
     /**
@@ -1069,7 +1061,6 @@ public class ShopInteractListener implements Listener {
     /**
      * Adds items to an inventory
      * @param inventory The inventory, to which the items will be added
-     * @param itemStack Items to add
      * @return Whether all items were added to the inventory
      */
     private boolean addToInventory(Inventory inventory, ShopProduct product) {
@@ -1128,7 +1119,6 @@ public class ShopInteractListener implements Listener {
     /**
      * Removes items to from an inventory
      * @param inventory The inventory, from which the items will be removed
-     * @param itemStack Items to remove
      * @return Whether all items were removed from the inventory
      */
     private boolean removeFromInventory(Inventory inventory, ShopProduct product) {

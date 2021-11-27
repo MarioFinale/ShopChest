@@ -1391,6 +1391,10 @@ public class LanguageUtils {
         itemNames.add(new ItemName(Material.PURPUR_SLAB, langConfig.getString("block.minecraft.purpur_slab", "Purpur Slab")));
         itemNames.add(new ItemName(Material.END_STONE_BRICKS, langConfig.getString("block.minecraft.end_stone_bricks", "End Stone Bricks")));
         itemNames.add(new ItemName(Material.BEETROOTS, langConfig.getString("block.minecraft.beetroots", "Beetroots")));
+<<<<<<< Updated upstream
+=======
+        itemNames.add(new ItemName(Material.DIRT_PATH, langConfig.getString("block.minecraft.dirt_path", "Dirt path")));
+>>>>>>> Stashed changes
         itemNames.add(new ItemName(Material.MAGMA_BLOCK, langConfig.getString("block.minecraft.magma_block", "Magma Block")));
         itemNames.add(new ItemName(Material.NETHER_WART_BLOCK, langConfig.getString("block.minecraft.nether_wart_block", "Nether Wart Block")));
         itemNames.add(new ItemName(Material.RED_NETHER_BRICKS, langConfig.getString("block.minecraft.red_nether_bricks", "Red Nether Bricks")));
@@ -1987,7 +1991,7 @@ public class LanguageUtils {
             itemNames.add(new ItemName(Material.GILDED_BLACKSTONE, langConfig.getString("block.minecraft.gilded_blackstone", "Gilded Blackstone")));
             itemNames.add(new ItemName(Material.HOGLIN_SPAWN_EGG, langConfig.getString("item.minecraft.hoglin_spawn_egg", "Hoglin Spawn Egg")));
             itemNames.add(new ItemName(Material.LODESTONE, langConfig.getString("block.minecraft.lodestone", "Lodestone")));
-            // itemNames.add(new ItemName(Material.LODESTONE_COMPASS, langConfig.getString("item.minecraft.lodestone_compass", "Lodestone Compass")));
+            //itemNames.add(new ItemName(Material.LODESTONE_COMPASS, langConfig.getString("item.minecraft.lodestone_compass", "Lodestone Compass")));
             itemNames.add(new ItemName(Material.MUSIC_DISC_PIGSTEP, langConfig.getString("item.minecraft.music_disc_pigstep", "Music Disc")));
             itemNames.add(new ItemName(Material.NETHER_GOLD_ORE, langConfig.getString("block.minecraft.nether_gold_ore", "Nether Gold Ore")));
             itemNames.add(new ItemName(Material.NETHER_SPROUTS, langConfig.getString("block.minecraft.nether_sprouts", "Nether Sprouts")));

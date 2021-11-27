@@ -134,6 +134,9 @@ public class Hologram {
      */
     public void resetVisible(Player p) {
         viewers.remove(p.getUniqueId());
+        for (ArmorStandWrapper wrapper : wrappers) {
+            wrapper.setVisible(p, false);
+        }
     }
 
     private void togglePlayer(Player p, boolean visible) {
@@ -200,6 +203,8 @@ public class Hologram {
             for (Player player : location.getWorld().getPlayers()) {
                 if (viewers.contains(player.getUniqueId())) {
                     wrapper.setVisible(player, true);
+                }else{
+                    wrapper.setVisible(player, false);
                 }
             }
         }

@@ -22,6 +22,7 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -36,13 +37,10 @@ import de.epiceric.shopchest.config.Config;
 import de.epiceric.shopchest.config.HologramFormat;
 import de.epiceric.shopchest.event.ShopInitializedEvent;
 import de.epiceric.shopchest.external.BentoBoxShopFlag;
-import de.epiceric.shopchest.external.PlotSquaredOldShopFlag;
-import de.epiceric.shopchest.external.PlotSquaredShopFlag;
 import de.epiceric.shopchest.external.WorldGuardShopFlag;
 import de.epiceric.shopchest.external.listeners.ASkyBlockListener;
 import de.epiceric.shopchest.external.listeners.GriefPreventionListener;
 import de.epiceric.shopchest.external.listeners.IslandWorldListener;
-import de.epiceric.shopchest.external.listeners.PlotSquaredListener;
 import de.epiceric.shopchest.external.listeners.TownyListener;
 import de.epiceric.shopchest.external.listeners.USkyBlockListener;
 import de.epiceric.shopchest.language.LanguageUtils;
@@ -323,15 +321,6 @@ public class ShopChest extends JavaPlugin {
             WorldGuardWrapper.getInstance().registerEvents(this);
         }
 
-        if (hasPlotSquared()) {
-            try {
-                Class.forName("com.plotsquared.core.PlotSquared");
-                PlotSquaredShopFlag.register(this);
-            } catch (ClassNotFoundException ex) {
-                PlotSquaredOldShopFlag.register(this);
-            }
-        }
-
         if (hasBentoBox()) {
             BentoBoxShopFlag.register(this);
         }
@@ -387,44 +376,9 @@ public class ShopChest extends JavaPlugin {
         if (!Config.enableUpdateChecker) {
             return;
         }
-        
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                UpdateChecker uc = new UpdateChecker(ShopChest.this);
-                UpdateCheckerResult result = uc.check();
+        getLogger().warning("Las actualizaciones están deshabilitadas en este Fork de ShopChest.");
 
-                switch (result) {
-                    case TRUE:
-                        latestVersion = uc.getVersion();
-                        downloadLink = uc.getLink();
-                        isUpdateNeeded = true;
 
-                        getLogger().warning(String.format("Version %s is available! You are running version %s.",
-                                latestVersion, getDescription().getVersion()));
-
-                        for (Player p : getServer().getOnlinePlayers()) {
-                            if (p.hasPermission(Permissions.UPDATE_NOTIFICATION)) {
-                                Utils.sendUpdateMessage(ShopChest.this, p);
-                            }
-                        }
-                        break;
-                
-                    case FALSE:
-                        latestVersion = "";
-                        downloadLink = "";
-                        isUpdateNeeded = false;
-                        break;
-
-                    case ERROR:
-                        latestVersion = "";
-                        downloadLink = "";
-                        isUpdateNeeded = false;
-                        getLogger().severe("An error occurred while checking for updates.");
-                        break;
-                }
-            }
-        }.runTaskAsynchronously(this);
     }
 
     private void registerListeners() {
@@ -460,8 +414,6 @@ public class ShopChest extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new GriefPreventionListener(this), this);
         if (hasIslandWorld())
             getServer().getPluginManager().registerEvents(new IslandWorldListener(this), this);
-        if (hasPlotSquared())
-            getServer().getPluginManager().registerEvents(new PlotSquaredListener(this), this);
         if (hasTowny())
             getServer().getPluginManager().registerEvents(new TownyListener(this), this);
         if (hasUSkyBlock())
