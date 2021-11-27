@@ -15,7 +15,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import com.palmergames.bukkit.towny.Towny;
 import com.wasteofplastic.askyblock.ASkyBlock;
 
 import org.bstats.bukkit.Metrics;
@@ -39,7 +38,6 @@ import de.epiceric.shopchest.external.WorldGuardShopFlag;
 import de.epiceric.shopchest.external.listeners.ASkyBlockListener;
 import de.epiceric.shopchest.external.listeners.GriefPreventionListener;
 import de.epiceric.shopchest.external.listeners.IslandWorldListener;
-import de.epiceric.shopchest.external.listeners.TownyListener;
 import de.epiceric.shopchest.external.listeners.USkyBlockListener;
 import de.epiceric.shopchest.language.LanguageUtils;
 import de.epiceric.shopchest.listeners.AreaShopListener;
@@ -88,7 +86,6 @@ public class ShopChest extends JavaPlugin {
     private ShopUtils shopUtils;
     private FileWriter fw;
     private Plugin worldGuard;
-    private Towny towny;
     private AuthMe authMe;
     private uSkyBlockAPI uSkyBlock;
     private ASkyBlock aSkyBlock;
@@ -275,11 +272,6 @@ public class ShopChest extends JavaPlugin {
     }
 
     private void loadExternalPlugins() {
-        Plugin townyPlugin = Bukkit.getServer().getPluginManager().getPlugin("Towny");
-        if (townyPlugin instanceof Towny) {
-            towny = (Towny) townyPlugin;
-        }
-
         Plugin authMePlugin = Bukkit.getServer().getPluginManager().getPlugin("AuthMe");
         if (authMePlugin instanceof AuthMe) {
             authMe = (AuthMe) authMePlugin;
@@ -412,8 +404,6 @@ public class ShopChest extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new GriefPreventionListener(this), this);
         if (hasIslandWorld())
             getServer().getPluginManager().registerEvents(new IslandWorldListener(this), this);
-        if (hasTowny())
-            getServer().getPluginManager().registerEvents(new TownyListener(this), this);
         if (hasUSkyBlock())
             getServer().getPluginManager().registerEvents(new USkyBlockListener(this), this);
         if (hasWorldGuard())
@@ -589,12 +579,6 @@ public class ShopChest extends JavaPlugin {
      */
     public boolean hasAuthMe() {
         return authMe != null && authMe.isEnabled();
-    }
-    /**
-     * @return Whether the plugin 'Towny' is enabled
-     */
-    public boolean hasTowny() {
-        return towny != null && towny.isEnabled();
     }
 
     /**
