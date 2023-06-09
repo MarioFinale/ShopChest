@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,6 +62,7 @@ public class Utils {
             BookMeta bookMeta1 = (BookMeta) itemStack1.getItemMeta();
             BookMeta bookMeta2 = (BookMeta) itemStack2.getItemMeta();
 
+
             if ((getMajorVersion() == 9 && getRevision() == 1) || getMajorVersion() == 8) {
                 CustomBookMeta.Generation generation1 = CustomBookMeta.getGeneration(itemStack1);
                 CustomBookMeta.Generation generation2 = CustomBookMeta.getGeneration(itemStack2);
@@ -91,7 +93,6 @@ public class Utils {
      */
     public static int getAmount(Inventory inventory, ItemStack itemStack) {
         int amount = 0;
-
         ArrayList<ItemStack> inventoryItems = new ArrayList<>();
 
         if (inventory instanceof PlayerInventory) {

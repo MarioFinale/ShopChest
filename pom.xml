@@ -6,7 +6,7 @@
 
     <groupId>de.epiceric</groupId>
     <artifactId>ShopChest</artifactId>
-    <version>1.17.1</version>
+    <version>1.19.2</version>
 
     <name>ShopChest</name>
     <url>https://www.spigotmc.org/resources/shopchest.11431/</url>
@@ -151,10 +151,31 @@
         </dependency>
         <dependency>
             <groupId>net.minecraft</groupId>
-            <artifactId>1.17.1-Patched</artifactId>
-            <version>1.17.1</version>
+            <artifactId>craftbukkit-1.19</artifactId>
+            <version>1.19</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/patched_1.17.1.jar</systemPath>
+            <systemPath>F:/lib/Lib 1.19/craftbukkit-1.19-R0.1-SNAPSHOT-remapped.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.19-R0.1</artifactId>
+            <version>1.19</version>
+            <scope>system</scope>
+            <systemPath>F:/lib/Lib 1.19/spigot-api-1.19-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>gson-2.8.9</artifactId>
+            <version>2.8.9</version>
+            <scope>system</scope>
+            <systemPath>F:/lib/Lib 1.19/gson-2.8.9.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>guava-31.0.1</artifactId>
+            <version>31.0.1</version>
+            <scope>system</scope>
+            <systemPath>F:/lib/Lib 1.19/guava-31.0.1-jre.jar</systemPath>
         </dependency>
 
         <!-- Shaded dependencies -->

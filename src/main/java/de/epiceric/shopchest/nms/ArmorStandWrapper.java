@@ -33,7 +33,9 @@ public class ArmorStandWrapper {
         armorStand.setVisible(false);
         armorStand.setCustomName("");
         armorStand.setCustomNameVisible(false);
-        armorStand.setCanTick(false);
+        armorStand.setInvulnerable(true);
+        armorStand.setPersistent(false);
+        armorStand.setRemoveWhenFarAway(true);
     }
 
     public void setVisible(Player player, boolean visible) {
@@ -51,7 +53,7 @@ public class ArmorStandWrapper {
                     armorStand.setVisible(false);
                     armorStand.setCustomName(customName);
                     armorStand.setCustomNameVisible(true);
-                    armorStand.setCanTick(false);
+                    armorStand.setInvulnerable(true);
                     armorStand.setPersistent(false);
                     armorStand.setRemoveWhenFarAway(true);
                 }

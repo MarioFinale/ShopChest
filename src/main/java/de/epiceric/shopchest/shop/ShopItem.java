@@ -40,11 +40,9 @@ public class ShopItem {
         entityId = entity.getEntityId();
         Item item = (Item) entity;
         item.setGravity(true);
-        item.setWillAge(true);
         item.setTicksLived(4800);
         item.setPickupDelay(32767);
         item.setInvulnerable(true);
-        item.setCanPlayerPickup(false);
         item.teleport(location);
         entity.teleport(location);
         exists = true;
@@ -98,11 +96,9 @@ public class ShopItem {
                         entityId = entity.getEntityId();
                         Item item = (Item) entity;
                         item.setGravity(true);
-                        item.setWillAge(true);
                         item.setTicksLived(4800);
                         item.setPickupDelay(32767);
                         item.setInvulnerable(true);
-                        item.setCanPlayerPickup(false);
                         entity.teleport(location);
                         item.teleport(location);
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
@@ -175,11 +171,9 @@ public class ShopItem {
                 entityId = entity.getEntityId();
                 Item item = (Item) entity;
                 item.setGravity(true);
-                item.setWillAge(true);
                 item.setTicksLived(4800);
                 item.setPickupDelay(32767);
                 item.setInvulnerable(true);
-                item.setCanPlayerPickup(false);
                 entity.teleport(location);
                 item.teleport(location);
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
